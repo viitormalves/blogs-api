@@ -20,8 +20,16 @@ const getAllUsers = async () => {
     return users;
 };
 
+const getUserById = async (id) => {
+    const userData = await User.findByPk(id);
+    if (!userData) return { type: 404, message: 'User does not exist' };
+    const { password: _, ...userWithoutPassword } = userData.dataValues;
+    return { message: userWithoutPassword };
+};
+
 module.exports = {
     Login,
     addUser,
     getAllUsers,
+    getUserById,
 };
