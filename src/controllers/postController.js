@@ -41,10 +41,17 @@ const deletePost = async (req, res) => {
     return res.status(204).end();
 };
 
+const searchTerm = async (req, res) => {
+    const { q } = req.query;
+    const search = await postService.searchTerm(q);
+    return res.status(200).json(search);
+};
+
 module.exports = {
     addBlogPost,
     getAllPosts,
     getPostById,
     updatedPostById,
     deletePost,
+    searchTerm,
 };
