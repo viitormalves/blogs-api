@@ -1,5 +1,5 @@
 const { Category, PostCategory, BlogPost, User } = require('../models');
-const { newPostValidation } = require('./validations/postValidation');
+const { newPostValidation, updatePostValidation } = require('./validations/postValidation');
 
 const addBlogPost = async (data) => {
     const { type, message } = await newPostValidation(data);
@@ -43,8 +43,29 @@ const getPostById = async (id) => {
     return { message: post.dataValues };
 };
 
+const updatedById = async (data) => {
+    const { type, message } = await updatePostValidation(data);
+    if (type) return { type, message };
+
+    const post = await BlogPost.findByPk(data.id);
+    if (post.userId !== data.userId) return { type: 401, message: 'Unauthorized user' };
+
+    const { title, content, id } = data;
+    await BlogPost.update({ title, content, updated: new Date() }, { where: { id } });
+
+    const { dataValues } = await BlogPost.findOne({ where: { id },
+        include: [
+            { model: User, as: 'user', attributes: { exclude: 'password' } },
+            { model: Category, as: 'categories', through: { attributes: [] } },
+        ],
+    });
+
+    return { message: dataValues };
+};
+
 module.exports = {
     addBlogPost,
     getAllPosts,
     getPostById,
+    updatedById,
 };
