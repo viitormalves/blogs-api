@@ -27,9 +27,12 @@ const getUserById = async (id) => {
     return { message: userWithoutPassword };
 };
 
+const deleteUserMe = async (id) => User.destroy({ where: { id } });
+
 module.exports = {
     Login,
     addUser,
     getAllUsers,
     getUserById,
+    deleteUserMe,
 };
