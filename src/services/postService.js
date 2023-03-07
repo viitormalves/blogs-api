@@ -43,7 +43,7 @@ const getPostById = async (id) => {
     return { message: post.dataValues };
 };
 
-const updatedById = async (data) => {
+const updatedPostById = async (data) => {
     const { type, message } = await updatePostValidation(data);
     if (type) return { type, message };
 
@@ -63,9 +63,20 @@ const updatedById = async (data) => {
     return { message: dataValues };
 };
 
+const deletePost = async ({ id, userId }) => {
+    const post = await BlogPost.findByPk(id);
+    if (!post) return { type: 404, message: 'Post does not exist' };
+    if (post.userId !== userId) return { type: 401, message: 'Unauthorized user' };
+
+    await BlogPost.destroy({ where: { id } });
+    await PostCategory.destroy({ where: { postId: id } });
+    return { type: '' };
+};
+
 module.exports = {
     addBlogPost,
     getAllPosts,
     getPostById,
-    updatedById,
+    updatedPostById,
+    deletePost,
 };

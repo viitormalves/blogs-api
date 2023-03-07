@@ -22,20 +22,29 @@ const getPostById = async (req, res) => {
     res.status(200).json(message);
 };
 
-const updatedById = async (req, res) => {
+const updatedPostById = async (req, res) => {
     const { id } = req.params;
     const data = req.body;
     const userId = req.data.id;
     data.id = id;
     data.userId = userId;
-    const { type, message } = await postService.updatedById(data);
+    const { type, message } = await postService.updatedPostById(data);
     if (type) return res.status(type).json({ message });
     res.status(200).json(message);
+};
+
+const deletePost = async (req, res) => {
+    const { id } = req.params;
+    const userId = req.data.id;
+    const { type, message } = await postService.deletePost({ id, userId });
+    if (type) return res.status(type).json({ message });
+    return res.status(204).end();
 };
 
 module.exports = {
     addBlogPost,
     getAllPosts,
     getPostById,
-    updatedById,
+    updatedPostById,
+    deletePost,
 };
